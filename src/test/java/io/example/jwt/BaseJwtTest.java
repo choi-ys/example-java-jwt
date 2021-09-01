@@ -2,11 +2,15 @@ package io.example.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
@@ -43,9 +47,9 @@ public class BaseJwtTest {
     private final String issuer = "authorization-server";
     private final String subject = "resource-access";
     private final String audience = "client-server";
-    private final Long accessValidityInSeconds = 10L;
+    private final Long accessValidityInSeconds = 1L;
 
-    private String generateJavaJwtToken(){
+    private String generateJwt(){
         String key = "name";
         String value = "choi";
 
@@ -66,13 +70,57 @@ public class BaseJwtTest {
     @DisplayName("java-jwt 토큰 생성 및 검증")
     public void createdJwtAndVerify() throws JsonProcessingException {
         // Given
-        String javaJwtToken = generateJavaJwtToken();
+        String jwt = generateJwt();
 
         // When
-        DecodedJWT expected = JWT.require(Algorithm.HMAC256(SIGNATURE_KEY)).build().verify(javaJwtToken);
+        DecodedJWT expected = JWT.require(Algorithm.HMAC256(SIGNATURE_KEY)).build().verify(jwt);
 
         // Then
         assertJwt(expected);
+    }
+
+    @Test
+    @DisplayName("잘못된 서명을 가진 토큰")
+    public void unsupportedJwtException(){
+        // Given
+        String jwt = generateJwt();
+        String incorrectKey = "incorrect-key";
+
+        // When & Then
+        assertThrows(SignatureVerificationException.class, () -> JWT.require(Algorithm.HMAC256(incorrectKey)).build().verify(jwt));
+    }
+
+    @Test
+    @DisplayName("유효하지 형식의 못한 토큰")
+    public void jWTDecodeException(){
+        // Given
+        String inValidJwtFormat = "header.payload";
+        String inValidJsonFormat = "header.payload.signature";
+
+        String base64EncodedHeader = new String(Base64.getEncoder().encode("header".getBytes()));
+        String base64EncodedPayload = new String(Base64.getEncoder().encode("payload".getBytes()));
+        String base64EncodedSignature = new String(Base64.getEncoder().encode("signature".getBytes()));
+        String inValidBase64Encoded = base64EncodedHeader
+                .concat(".").concat(base64EncodedPayload)
+                .concat(".").concat(base64EncodedSignature);
+
+        System.out.println(inValidBase64Encoded);
+
+        // When & Then
+        assertThrows(JWTDecodeException.class, () -> JWT.require(ALGORITHM).build().verify(inValidJwtFormat));
+        assertThrows(JWTDecodeException.class, () -> JWT.require(ALGORITHM).build().verify(inValidJsonFormat));
+        assertThrows(JWTDecodeException.class, () -> JWT.require(ALGORITHM).build().verify(inValidBase64Encoded));
+    }
+
+    @Test
+    @DisplayName("유효기간이 만료된 토큰")
+    public void expiredJwt() throws InterruptedException {
+        // Given
+        String jwt = generateJwt();
+
+        // When & Then
+        Thread.sleep(2000L);
+        assertThrows(TokenExpiredException.class, () -> JWT.require(ALGORITHM).build().verify(jwt));
     }
 
     private void assertJwt(DecodedJWT expected) throws JsonProcessingException {
