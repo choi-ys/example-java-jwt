@@ -2,24 +2,24 @@ package io.example.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
+import static io.example.jwt.utils.TokenUtils.getClaimValue;
+import static io.example.jwt.utils.TokenUtils.getHeaderMap;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author : choi-ys
  * @date : 2021/09/01 12:36 오후
  */
-public class SimpleJwtTest {
+@DisplayName("Base:java-jwt")
+public class BaseJwtTest {
 
     /**
      * Header
@@ -44,8 +44,6 @@ public class SimpleJwtTest {
     private final String subject = "resource-access";
     private final String audience = "client-server";
     private final Long accessValidityInSeconds = 10L;
-
-    private ObjectMapper objectMapper = new ObjectMapper();
 
     private String generateJavaJwtToken(){
         String key = "name";
@@ -75,15 +73,6 @@ public class SimpleJwtTest {
 
         // Then
         assertJwt(expected);
-    }
-
-    private Map getHeaderMap(DecodedJWT decodedJWT) throws JsonProcessingException {
-        String headerJson = new String(Base64.getDecoder().decode(decodedJWT.getHeader()));
-        return objectMapper.readValue(headerJson, Map.class);
-    }
-
-    private Claim getClaimValue(Map claimsMap, String key){
-        return (Claim) claimsMap.get(key);
     }
 
     private void assertJwt(DecodedJWT expected) throws JsonProcessingException {
