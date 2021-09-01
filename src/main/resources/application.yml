@@ -1,0 +1,4 @@
+jwt:
+  signature_key: test-signature-key
+  issuer: io.example.jwt
+  access-token-validity-in-seconds-term: 600 # access token의 유효 기간 : 10분
