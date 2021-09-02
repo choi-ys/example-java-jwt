@@ -45,14 +45,11 @@ public class Member {
             name = "member_role_tb",
             joinColumns = @JoinColumn(
                     name = "member_id",
-                    foreignKey = @ForeignKey(name = "TB_MEMBER_ROLE_MEMBER_NO_FOREIGN_KEY")
+                    foreignKey = @ForeignKey(name = "TB_MEMBER_ROLE_MEMBER_ID_FOREIGN_KEY")
             )
     )
     @Enumerated(EnumType.STRING)
     private Set<MemberRole> roles = Set.of(MemberRole.MEMBER);
-
-    @OneToMany(mappedBy = "member", fetch = EAGER, cascade = CascadeType.ALL)
-    private Set<Authority> authorities = Set.of(new Authority(MemberRole.MEMBER.name()));
 
     // * --------------------------------------------------------------
     // * Header : 도메인 생성
@@ -63,13 +60,6 @@ public class Member {
         this.email = email;
         this.name = name;
         this.password = password;
-        this.authorities.forEach(it -> it.mappingMember(this));
-    }
-
-    public void addAuthorities(Set<Authority> add){
-        HashSet hashSet = new HashSet(authorities);
-        hashSet.addAll(add);
-        authorities = hashSet;
     }
 
     // * --------------------------------------------------------------
