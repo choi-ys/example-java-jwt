@@ -40,7 +40,7 @@ public class Member {
     // * @author : choi-ys
     // * @date : 2021-09-02 오전 3:09
     // * --------------------------------------------------------------
-    @ElementCollection(fetch = LAZY)
+    @ElementCollection(fetch = EAGER)
     @CollectionTable(
             name = "member_role_tb",
             joinColumns = @JoinColumn(
