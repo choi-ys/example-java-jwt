@@ -20,15 +20,15 @@ public class MemberGenerator {
     private static final String name = "choi-ys";
     private static final String password = "password";
 
-    public static Member member(){
+    public static Member member() {
         return member(email, name);
     }
 
-    public static Member member(String email, String name){
+    public static Member member(String email, String name) {
         return new Member(email, name, password);
     }
 
-    public Member savedMember(){
+    public Member savedMember() {
         return memberRepository.saveAndFlush(member());
     }
 }
