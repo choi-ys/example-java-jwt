@@ -4,11 +4,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-
 import java.util.HashSet;
 import java.util.Set;
 
-import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.FetchType.EAGER;
 import static lombok.AccessLevel.PROTECTED;
 
 @Entity
@@ -16,7 +15,7 @@ import static lombok.AccessLevel.PROTECTED;
         name = "member_tb",
         uniqueConstraints = @UniqueConstraint(
                 name = "MEMBER_EMAIL_UNIQUE",
-                columnNames = "member_email"
+                columnNames = "email"
         ))
 @Getter
 @NoArgsConstructor(access = PROTECTED)
@@ -45,12 +44,11 @@ public class Member {
     @CollectionTable(
             name = "member_role_tb",
             joinColumns = @JoinColumn(
-                    name = "partner_no",
-                    foreignKey = @ForeignKey(name = "TB_PARTNER_ROLE_PARTNER_NO_FOREIGN_KEY")
+                    name = "member_id",
+                    foreignKey = @ForeignKey(name = "TB_MEMBER_ROLE_MEMBER_NO_FOREIGN_KEY")
             )
     )
     @Enumerated(EnumType.STRING)
-    @Column(name = "member_role", nullable = false, length = 20)
     private Set<MemberRole> roles = Set.of(MemberRole.MEMBER);
 
     // * --------------------------------------------------------------
