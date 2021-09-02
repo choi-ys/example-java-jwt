@@ -51,6 +51,9 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Set<MemberRole> roles = Set.of(MemberRole.MEMBER);
 
+    @OneToMany(mappedBy = "member", fetch = EAGER, cascade = CascadeType.ALL)
+    private Set<Authority> authorities = Set.of(new Authority(MemberRole.MEMBER.name()));
+
     // * --------------------------------------------------------------
     // * Header : 도메인 생성
     // * @author : choi-ys
@@ -60,6 +63,13 @@ public class Member {
         this.email = email;
         this.name = name;
         this.password = password;
+        this.authorities.forEach(it -> it.mappingMember(this));
+    }
+
+    public void addAuthorities(Set<Authority> add){
+        HashSet hashSet = new HashSet(authorities);
+        hashSet.addAll(add);
+        authorities = hashSet;
     }
 
     // * --------------------------------------------------------------
