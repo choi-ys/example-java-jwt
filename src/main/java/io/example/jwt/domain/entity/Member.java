@@ -49,7 +49,7 @@ public class Member {
             )
     )
     @Enumerated(EnumType.STRING)
-    private Set<MemberRole> roles = Set.of(MemberRole.MEMBER);
+    private Set<MemberRole> roles = new HashSet<>();
 
     // * --------------------------------------------------------------
     // * Header : 도메인 생성
@@ -60,6 +60,7 @@ public class Member {
         this.email = email;
         this.name = name;
         this.password = password;
+        this.addRoleSet(Set.of(MemberRole.MEMBER));
     }
 
     // * --------------------------------------------------------------
@@ -69,14 +70,10 @@ public class Member {
     // * @date : 2021-09-02 오전 3:09
     // * --------------------------------------------------------------
     public void addRoleSet(Set<MemberRole> additionRoleSet){
-        HashSet memberRoles = new HashSet(roles);
-        memberRoles.addAll(additionRoleSet);
-        roles = memberRoles;
+        roles.addAll(additionRoleSet);
     }
 
     public void removeRoleSet(Set<MemberRole> removalRoleSet){
-        HashSet memberRoles = new HashSet(roles);
-        memberRoles.removeAll(removalRoleSet);
-        roles = memberRoles;
+        roles.removeAll(removalRoleSet);
     }
 }
