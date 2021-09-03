@@ -40,7 +40,7 @@ class MemberControllerTest {
         SignupRequest signupRequest = new SignupRequest(email, name, password);
 
         // When
-        String urlTemplate = "/member/signup";
+        String urlTemplate = "/member";
         ResultActions resultActions = this.mockMvc.perform(post(urlTemplate)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
