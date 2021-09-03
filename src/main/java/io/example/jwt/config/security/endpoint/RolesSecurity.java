@@ -16,6 +16,7 @@ public enum RolesSecurity {
                     "/index")),
             new RequestAuthentication(HttpMethod.POST, Arrays.asList(
                     "/member"
+//                    "/login"
             ))
     ));
 

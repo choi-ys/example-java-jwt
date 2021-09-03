@@ -1,7 +1,10 @@
 package io.example.jwt.repository;
 
 import io.example.jwt.domain.entity.Member;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
 
 /**
  * @author : choi-ys
@@ -10,4 +13,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
     boolean existsByEmail(String email);
+
+    @EntityGraph(attributePaths = "roles")
+    Optional<Member> findByEmail(String email);
 }

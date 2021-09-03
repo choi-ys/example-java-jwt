@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.example.jwt.config.security.jwt2.TokenProvider;
 import io.example.jwt.domain.vo.Token;
 import io.example.jwt.utils.TokenUtils;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +44,7 @@ class TokenProviderTest {
 
     @Test
     @DisplayName("load jwt configuration by application.yml")
-    public void loadJwtConfigurationByApplicationYml(){
+    public void loadJwtConfigurationByApplicationYml() {
         System.out.println(signature_key);
         System.out.println(issuer);
         System.out.println(accessTokenValidityInSecondsTerm);
@@ -63,17 +64,17 @@ class TokenProviderTest {
                 () -> assertEquals(headerMap.get("alg"), Algorithm.HMAC256(signature_key).getName()),
                 () -> assertEquals(headerMap.get("typ"), "JWT"),
                 () -> assertEquals(token.getAccessExpire().getTime() / 1000, verifiedToken.getClaim("exp").asLong()
-                , "millisecond 부분이 제거된 token 객체의 accessExpire 값과 payload의 exp 항목값의 동일 여부를 확인한다.")
+                        , "millisecond 부분이 제거된 token 객체의 accessExpire 값과 payload의 exp 항목값의 동일 여부를 확인한다.")
         );
     }
-    
+
     @Test
     @DisplayName("getClaimsMap")
-    public void getClaimsMap(){
+    public void getClaimsMap() {
         // Given
         Token token = tokenProvider.createToken();
         Set<String> expectedClaimsKeySet = Set.of("iss", "sub", "aud", "iat", "exp");
-    
+
         // When
         Map<String, Claim> claimsMap = tokenProvider.getClaimsMap(token.getAccessToken());
 

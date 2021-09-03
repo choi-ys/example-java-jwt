@@ -35,6 +35,9 @@ public class Member {
     @Column(name = "password", nullable = false, length = 100)
     private String password;
 
+    @Column(name = "enabled", nullable = false)
+    private boolean enabled;
+
     // * --------------------------------------------------------------
     // * Header : Member <-> MemberRoles Entity의 연관관계 설정
     // * @author : choi-ys

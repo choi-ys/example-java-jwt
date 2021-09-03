@@ -31,4 +31,8 @@ public class MemberGenerator {
     public Member savedMember() {
         return memberRepository.saveAndFlush(member());
     }
+
+    public Member savedMember(String email, String name){
+        return memberRepository.saveAndFlush(member(email, name));
+    }
 }

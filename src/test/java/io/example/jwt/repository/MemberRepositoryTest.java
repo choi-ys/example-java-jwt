@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
 
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -53,6 +54,25 @@ class MemberRepositoryTest extends JpaTestConfig {
 
         // When
         Member expected = memberRepository.findById(savedMember.getId()).orElseThrow();
+
+        // Then
+        assertAll(
+                () -> assertEquals(expected.getId(), savedMember.getId()),
+                () -> assertEquals(expected.getName(), savedMember.getName()),
+                () -> assertEquals(expected.getEmail(), savedMember.getEmail()),
+                () -> assertEquals(expected.getRoles(), savedMember.getRoles())
+        );
+    }
+    
+    @Test
+    @DisplayName("findByEmail")
+    public void findByEmail(){
+        // Given
+        Member savedMember = memberGenerator.savedMember();
+        clear();
+
+        // When
+        Member expected = memberRepository.findByEmail(savedMember.getEmail()).orElseThrow();
 
         // Then
         assertAll(

@@ -18,9 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @date : 2021/09/02 4:03 오후
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DisplayName("Service:Member")
 @RequiredArgsConstructor
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
+@DisplayName("Service:Member")
 class MemberServiceTest {
 
     private final MemberService memberService;
