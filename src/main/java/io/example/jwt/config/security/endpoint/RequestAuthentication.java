@@ -1,4 +1,4 @@
-package io.example.jwt.config.security;
+package io.example.jwt.config.security.endpoint;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -13,12 +13,12 @@ import java.util.List;
  */
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class AuthRequest {
+public class RequestAuthentication {
     private HttpMethod httpMethod;
-    private List<String> patterns;
+    private List<String> scope;
 
-    public AuthRequest(HttpMethod httpMethod, List<String> patterns) {
+    public RequestAuthentication(HttpMethod httpMethod, List<String> scope) {
         this.httpMethod = httpMethod;
-        this.patterns = patterns;
+        this.scope = scope;
     }
 }

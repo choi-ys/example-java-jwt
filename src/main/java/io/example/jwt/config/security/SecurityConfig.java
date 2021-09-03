@@ -1,5 +1,6 @@
 package io.example.jwt.config.security;
 
+import io.example.jwt.config.security.endpoint.RolesSecurity;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,8 +25,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeRequests(request ->
                         request
-                                .antMatchers(HttpMethod.GET, MemberRoleSecurity.NONE.patterns(HttpMethod.GET)).permitAll()
-                                .antMatchers(HttpMethod.POST, MemberRoleSecurity.NONE.patterns(HttpMethod.POST)).permitAll()
+                                .antMatchers(HttpMethod.GET, RolesSecurity.NONE.patterns(HttpMethod.GET)).permitAll()
+                                .antMatchers(HttpMethod.POST, RolesSecurity.NONE.patterns(HttpMethod.POST)).permitAll()
                                 .anyRequest().authenticated()
                 )
         ;

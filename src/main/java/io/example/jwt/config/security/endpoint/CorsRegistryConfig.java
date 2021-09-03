@@ -1,4 +1,4 @@
-package io.example.jwt.config.security;
+package io.example.jwt.config.security.endpoint;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

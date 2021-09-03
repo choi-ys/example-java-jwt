@@ -1,4 +1,4 @@
-package io.example.jwt.config.security;
+package io.example.jwt.config.security.endpoint;
 
 import org.springframework.http.HttpMethod;
 
@@ -9,26 +9,26 @@ import java.util.List;
  * @author : choi-ys
  * @date : 2021-09-02 오전 7:02
  */
-public enum MemberRoleSecurity {
+public enum RolesSecurity {
 
     NONE(Arrays.asList(
-            new AuthRequest(HttpMethod.GET, Arrays.asList(
+            new RequestAuthentication(HttpMethod.GET, Arrays.asList(
                     "/index")),
-            new AuthRequest(HttpMethod.POST, Arrays.asList(
+            new RequestAuthentication(HttpMethod.POST, Arrays.asList(
                     "/member/signup"
             ))
     ));
 
-    private List<AuthRequest> matchers;
+    private List<RequestAuthentication> matchers;
 
-    MemberRoleSecurity(List<AuthRequest> matchers) {
+    RolesSecurity(List<RequestAuthentication> matchers) {
         this.matchers = matchers;
     }
 
     public String[] patterns(HttpMethod httpMethod) {
         return matchers.stream()
                 .filter(it -> it.getHttpMethod().equals(httpMethod))
-                .map(it -> it.getPatterns())
+                .map(it -> it.getScope())
                 .flatMap(arr -> Arrays.stream(arr.toArray(String[]::new)))
                 .toArray(String[]::new)
                 ;
