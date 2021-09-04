@@ -8,7 +8,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -18,25 +17,27 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
-public class JWTCheckFilter extends BasicAuthenticationFilter {
+public class TokenCheckFilter extends BasicAuthenticationFilter {
 
     private LoginService loginService;
+    private TokenUtil tokenUtil;
 
-    public JWTCheckFilter(AuthenticationManager authenticationManager, LoginService loginService) {
+    public TokenCheckFilter(AuthenticationManager authenticationManager, LoginService loginService, TokenUtil tokenUtil) {
         super(authenticationManager);
         this.loginService = loginService;
+        this.tokenUtil = tokenUtil;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         String bearer = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if(bearer == null || !bearer.startsWith("Bearer ")){
+        if (bearer == null || !bearer.startsWith("Bearer ")) {
             chain.doFilter(request, response);
             return;
         }
         String token = bearer.substring("Bearer ".length());
-        VerifyResult result = JWTUtil.verify(token);
-        if(result.isSuccess()){
+        VerifyResult result = tokenUtil.verify(token);
+        if (result.isSuccess()) {
             Member member = (Member) loginService.loadUserByUsername(result.getUsername());
             UsernamePasswordAuthenticationToken userToken = new UsernamePasswordAuthenticationToken(
                     member.getEmail(),
@@ -47,7 +48,7 @@ public class JWTCheckFilter extends BasicAuthenticationFilter {
             );
             SecurityContextHolder.getContext().setAuthentication(userToken);
             chain.doFilter(request, response);
-        }else{
+        } else {
             throw new TokenExpiredException("Token is not valid");
         }
     }

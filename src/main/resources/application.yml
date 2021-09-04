@@ -1,4 +1,8 @@
 jwt:
-  signature_key: test-signature-key
+  signature: test-signature-key
   issuer: io.example.jwt
-  access-token-validity-in-seconds-term: 600 # access token의 유효 기간 : 10분
+  subject: resource-access
+  audience: client-server
+  claim-key: claim
+  access-token-validity-in-seconds-term: 600000 # access token의 유효 기간 : 10분
+  refresh-token-validity-in-seconds-term: 1200000 # access token의 유효 기간 : 20분

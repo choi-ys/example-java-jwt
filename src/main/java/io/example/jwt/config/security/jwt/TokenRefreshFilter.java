@@ -2,7 +2,6 @@ package io.example.jwt.config.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.example.jwt.domain.dto.adapter.MemberAdapter;
-import io.example.jwt.domain.dto.request.LoginRequest;
 import io.example.jwt.domain.vo.Token;
 import io.example.jwt.service.LoginService;
 import lombok.SneakyThrows;
@@ -19,17 +18,20 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
 
-public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
+public class TokenRefreshFilter extends UsernamePasswordAuthenticationFilter {
 
     private ObjectMapper objectMapper = new ObjectMapper();
     private LoginService loginService;
+    private TokenProvider tokenProvider;
+    private TokenUtil tokenUtil;
 
-    public JWTLoginFilter(AuthenticationManager authenticationManager, LoginService loginService) {
+    public TokenRefreshFilter(AuthenticationManager authenticationManager, LoginService loginService, TokenUtil tokenUtil, TokenProvider tokenProvider) {
         super(authenticationManager);
         this.loginService = loginService;
-        setFilterProcessesUrl("/login");
+        this.tokenUtil = tokenUtil;
+        this.tokenProvider = tokenProvider;
+        setFilterProcessesUrl("/auth/refresh");
     }
 
     @SneakyThrows
@@ -37,13 +39,21 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
     public Authentication attemptAuthentication(
             HttpServletRequest request,
             HttpServletResponse response) throws AuthenticationException {
-        LoginRequest loginRequest = objectMapper.readValue(request.getInputStream(), LoginRequest.class);
-        UserDetails userDetails = loginService.loadUserByUsername(loginRequest.getEmail());
-        return new UsernamePasswordAuthenticationToken(
-                userDetails, userDetails.getAuthorities()
-        );
+        Token token = objectMapper.readValue(request.getInputStream(), Token.class);
+        VerifyResult verify = tokenUtil.verify(token.getAccessToken());
+        if (verify.isSuccess()) {
+            UserDetails userDetails = loginService.loadUserByUsername(verify.getUsername());
+            return new UsernamePasswordAuthenticationToken(
+                    userDetails, userDetails.getAuthorities()
+            );
+        }
+        return null;
     }
 
+    /**
+     * TODO refresh 요청 처리 보완
+     * - refresh 요청 시 기 발급 access-token, refresh-token blacklist(만료) 처리
+     */
     @Override
     protected void successfulAuthentication(
             HttpServletRequest request,
@@ -52,14 +62,9 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
             Authentication authResult) throws IOException {
 
         MemberAdapter member = (MemberAdapter) authResult.getPrincipal();
-        String accessToken = JWTUtil.makeAuthToken(member.getMember());
-        String refreshToken = JWTUtil.makeRefreshToken(member.getMember());
+        Token token = tokenProvider.createToken(member.getUsername());
 
-        response.setHeader("accessToken", accessToken);
-        response.setHeader("refreshToken", refreshToken);
         response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-
-        Token token = new Token(accessToken, refreshToken, new Date());
         response.getOutputStream().write(objectMapper.writeValueAsBytes(token));
     }
 }

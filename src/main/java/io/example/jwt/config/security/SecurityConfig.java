@@ -1,9 +1,7 @@
 package io.example.jwt.config.security;
 
 import io.example.jwt.config.security.endpoint.RolesSecurity;
-import io.example.jwt.config.security.jwt.JWTCheckFilter;
-import io.example.jwt.config.security.jwt.JWTLoginFilter;
-import io.example.jwt.config.security.jwt.JWTRefreshFilter;
+import io.example.jwt.config.security.jwt.*;
 import io.example.jwt.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
@@ -25,19 +23,20 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final LoginService loginService;
+    private final TokenUtil tokenUtil;
+    private final TokenProvider tokenProvider;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        JWTLoginFilter loginFilter = new JWTLoginFilter(authenticationManager(), loginService);
-        JWTCheckFilter checkFilter = new JWTCheckFilter(authenticationManager(), loginService);
-        JWTRefreshFilter refreshFilter = new JWTRefreshFilter(authenticationManager(), loginService);
+        TokenGenerateFilter loginFilter = new TokenGenerateFilter(authenticationManager(), loginService, tokenUtil, tokenProvider);
+        TokenCheckFilter checkFilter = new TokenCheckFilter(authenticationManager(), loginService, tokenUtil);
+        TokenRefreshFilter refreshFilter = new TokenRefreshFilter(authenticationManager(), loginService, tokenUtil, tokenProvider);
 
         http
                 .csrf().disable()
                 .cors()
                 .and()
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                //                .addFilterAt(JwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAt(checkFilter, BasicAuthenticationFilter.class)
                 .addFilterAt(refreshFilter, BasicAuthenticationFilter.class)
@@ -47,7 +46,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                                 .antMatchers(HttpMethod.POST, RolesSecurity.NONE.patterns(HttpMethod.POST)).permitAll()
                                 .anyRequest().authenticated()
                 )
-        //                .apply(new JwtSecurityConfig(tokenProvider))
         ;
     }
 }
