@@ -2,7 +2,6 @@ package io.example.jwt.config.security.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import io.example.jwt.domain.vo.Token;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,9 +33,6 @@ public class TokenProvider implements InitializingBean {
 
     @Value("${jwt.refresh-token-validity-in-seconds-term}")
     private Long REFRESH_TOKEN_VALIDITY_IN_SECONDS_TERM;
-
-    //    private static final long AUTH_TIME = 2;
-    //    private static final long REFRESH_TIME = 60 * 60 * 24 * 7;
 
     /**
      * TokenProvider Bean 생성 이후 application.yml의 jwt.signature_key값 로드 완료 후 ALGORITHM 초기화

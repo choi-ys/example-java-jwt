@@ -2,10 +2,12 @@ package io.example.jwt.domain.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static javax.persistence.FetchType.EAGER;
 import static lombok.AccessLevel.PROTECTED;
@@ -78,5 +80,11 @@ public class Member {
 
     public void removeRoleSet(Set<MemberRole> removalRoleSet){
         roles.removeAll(removalRoleSet);
+    }
+
+    public Set<SimpleGrantedAuthority> toSimpleGrantedAuthoritySet(){
+        return roles.stream()
+                .map(it -> new SimpleGrantedAuthority(it.name()))
+                .collect(Collectors.toSet());
     }
 }

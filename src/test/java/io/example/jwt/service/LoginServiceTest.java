@@ -7,11 +7,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.TestConstructor;
-
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,7 +40,7 @@ class LoginServiceTest {
         assertAll(
                 () -> assertEquals(expected.getUsername(), savedMember.getEmail()),
                 () -> assertEquals(expected.getPassword(), savedMember.getPassword()),
-                () -> assertEquals(expected.getAuthorities(), savedMember.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.name())).collect(Collectors.toSet()))
+                () -> assertEquals(expected.getAuthorities(), savedMember.toSimpleGrantedAuthoritySet())
         );
     }
 }

@@ -42,9 +42,7 @@ public class TokenCheckFilter extends BasicAuthenticationFilter {
             UsernamePasswordAuthenticationToken userToken = new UsernamePasswordAuthenticationToken(
                     member.getEmail(),
                     null,
-                    member.getRoles().stream()
-                            .map(it -> new SimpleGrantedAuthority(it.name()))
-                            .collect(Collectors.toSet())
+                    member.toSimpleGrantedAuthoritySet()
             );
             SecurityContextHolder.getContext().setAuthentication(userToken);
             chain.doFilter(request, response);

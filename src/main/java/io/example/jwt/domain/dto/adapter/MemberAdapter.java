@@ -23,13 +23,7 @@ public class MemberAdapter extends User {
     public MemberAdapter(Member member) {
         super(member.getEmail(), member.getPassword(),
                 member.isEnabled(), member.isEnabled(), member.isEnabled(), member.isEnabled(),
-                authorities(member.getRoles()));
+                member.toSimpleGrantedAuthoritySet());
         this.member = member;
-    }
-
-    private static Collection<? extends GrantedAuthority> authorities(Set<MemberRole> roles){
-        return roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.name()))
-                .collect(Collectors.toSet());
     }
 }
