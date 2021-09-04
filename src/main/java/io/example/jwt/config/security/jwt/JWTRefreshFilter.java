@@ -19,6 +19,7 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 
 public class JWTRefreshFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -57,10 +58,16 @@ public class JWTRefreshFilter extends UsernamePasswordAuthenticationFilter {
             HttpServletResponse response,
             FilterChain chain,
             Authentication authResult) throws IOException {
+
         MemberAdapter member = (MemberAdapter) authResult.getPrincipal();
-        response.setHeader("auth_token", JWTUtil.makeAuthToken(member.getMember()));
-        response.setHeader("refresh_token", JWTUtil.makeRefreshToken(member.getMember()));
+        String accessToken = JWTUtil.makeAuthToken(member.getMember());
+        String refreshToken = JWTUtil.makeRefreshToken(member.getMember());
+
+        response.setHeader("accessToken", accessToken);
+        response.setHeader("refreshToken", refreshToken);
         response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        response.getOutputStream().write(objectMapper.writeValueAsBytes(member));
+
+        Token token = new Token(accessToken, refreshToken, new Date());
+        response.getOutputStream().write(objectMapper.writeValueAsBytes(token));
     }
 }

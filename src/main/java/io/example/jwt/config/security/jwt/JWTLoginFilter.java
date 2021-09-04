@@ -50,13 +50,16 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
             HttpServletResponse response,
             FilterChain chain,
             Authentication authResult) throws IOException {
+
         MemberAdapter member = (MemberAdapter) authResult.getPrincipal();
         String accessToken = JWTUtil.makeAuthToken(member.getMember());
-        response.setHeader("access_token", accessToken);
-        response.setHeader("refresh_token", JWTUtil.makeRefreshToken(member.getMember()));
+        String refreshToken = JWTUtil.makeRefreshToken(member.getMember());
+
+        response.setHeader("accessToken", accessToken);
+        response.setHeader("refreshToken", refreshToken);
         response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-//        response.getOutputStream().write(objectMapper.writeValueAsBytes(member));
-        Token token = new Token(accessToken, new Date());
+
+        Token token = new Token(accessToken, refreshToken, new Date());
         response.getOutputStream().write(objectMapper.writeValueAsBytes(token));
     }
 }

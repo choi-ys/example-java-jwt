@@ -63,7 +63,7 @@ class TokenProviderTest {
         assertAll(
                 () -> assertEquals(headerMap.get("alg"), Algorithm.HMAC256(signature_key).getName()),
                 () -> assertEquals(headerMap.get("typ"), "JWT"),
-                () -> assertEquals(token.getAccessExpire().getTime() / 1000, verifiedToken.getClaim("exp").asLong()
+                () -> assertEquals(token.getAccessExpired().getTime() / 1000, verifiedToken.getClaim("exp").asLong()
                         , "millisecond 부분이 제거된 token 객체의 accessExpire 값과 payload의 exp 항목값의 동일 여부를 확인한다.")
         );
     }

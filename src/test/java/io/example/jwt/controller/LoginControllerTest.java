@@ -60,7 +60,9 @@ class LoginControllerTest {
         // Then
         resultActions.andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("access_token").exists())
+                .andExpect(jsonPath("accessToken").exists())
+                .andExpect(jsonPath("refreshToken").exists())
+                .andExpect(jsonPath("accessExpired").exists())
         ;
     }
 
@@ -73,7 +75,7 @@ class LoginControllerTest {
         LoginRequest loginRequest = new LoginRequest(savedMember.getEmail(), member.getPassword());
 
         // When
-        ResultActions resultActions = this.mockMvc.perform(post(REFRESH_URL)
+        ResultActions resultActions = this.mockMvc.perform(post(LOGIN_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(loginRequest))
@@ -90,6 +92,9 @@ class LoginControllerTest {
         // Then
         resultActions.andDo(print())
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("accessToken").exists())
+                .andExpect(jsonPath("refreshToken").exists())
+                .andExpect(jsonPath("accessExpired").exists())
         ;
     }
 }

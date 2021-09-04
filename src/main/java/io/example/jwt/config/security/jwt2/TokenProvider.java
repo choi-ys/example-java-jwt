@@ -55,7 +55,7 @@ public class TokenProvider implements InitializingBean {
         Date accessExpire = new Date(System.currentTimeMillis() + (accessTokenValidityInSecondsTerm * 1000));
         String token = tokenBuilder(currentTimeMillis, accessExpire);
 
-        return new Token(token, accessExpire);
+        return new Token(token, null, accessExpire);
     }
 
     private String tokenBuilder(long currentTimeMillis, Date expire) {
